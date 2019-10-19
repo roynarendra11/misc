@@ -1,0 +1,42 @@
+
+# Central Limit Theorem -------------------------------------------
+
+library(dplyr)
+library(purrr)
+library(ggplot2)
+library("gridExtra")
+
+mu = 100
+sigma = 10
+
+sample_mean <- function(iter,sample_size){
+  return(mean(rnorm(sample_size,mean = mu,sd = sigma)))
+}
+
+
+func <- function(x1){
+    sampleMeans.1 <- 1:x1 %>% map2_dbl(10,sample_mean)
+    print(paste('Sample mean: ',mean(sampleMeans.1)))
+    
+    ggplot()+aes(x=sampleMeans.1)+ geom_histogram(aes(y =..density..),
+                                                 colour = "black", 
+                                                  fill = "white",
+                                                 bins = 30) +
+      stat_function(fun = dnorm, args = list(mean = mu, sd = sigma/sqrt(10)),color = 'red') +
+      theme_bw()+ labs(x="Sample Means", y = "Density", title = paste('Sample Size = ',x1))  %>% return()
+    }
+  
+
+g1 <- func(50)
+g2 <- func(75)
+g3 <- func(100)
+g4 <- func(1000)
+g5 <- func(1500)
+g6 <- func(2000)
+g7 <- func(2500)
+g8 <- func(5000)
+
+grid.arrange(g1,g2,g3,g4,g5,g6,g7,g8,ncol = 2, nrow =4 )
+
+# as number of samples increase, distribution of sample means tend to move towards Normal distribution
+
